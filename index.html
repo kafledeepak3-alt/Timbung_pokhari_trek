@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123d35">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Timbung Pokhari Trek Checklist</title>
+<style>
+:root{--green:#123d35;--green2:#1e6654;--mint:#e3f3e9;--paper:#f5f7f2;--ink:#172923;--muted:#63736c;--line:#dce5de;--white:#fff;--gold:#f4c86a}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif}
+header{background:var(--green);color:white;padding:24px 18px 22px;border-radius:0 0 26px 26px}
+.top{display:flex;align-items:center;gap:9px;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#c8e6d7;font-weight:700}
+h1{font-size:27px;line-height:1.13;margin:13px 0 8px;letter-spacing:-.03em}header p{margin:0;color:#d7e9df;font-size:14px}
+main{max-width:680px;margin:auto;padding:16px 14px 100px}
+.progress-card{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 5px 20px #183d3510}
+.progressline{display:flex;align-items:center;justify-content:space-between;gap:10px}.percent{font-size:24px;font-weight:800;color:var(--green)}
+.track{height:9px;background:#e9eee9;border-radius:99px;overflow:hidden;margin:12px 0 8px}.fill{height:100%;width:0;background:var(--green2);border-radius:99px;transition:width .2s}
+.small{font-size:12px;color:var(--muted)}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:11px 13px;font-weight:700}
+.primary{background:var(--green);color:white}.secondary{background:var(--mint);color:var(--green)}.plain{background:#edf0eb;color:#35463e}
+.person{display:flex;gap:8px;align-items:center;margin:14px 0}.person input{min-width:0;flex:1;border:1px solid var(--line);border-radius:12px;padding:12px;background:white;font:inherit}
+.toolbar{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.filter{white-space:nowrap;background:white;color:var(--muted);border:1px solid var(--line);padding:9px 12px}.filter.active{background:var(--green);color:white;border-color:var(--green)}
+.section{margin-top:14px}.section-head{display:flex;justify-content:space-between;align-items:center;margin:0 3px 9px}.section-head h2{font-size:16px;margin:0}.section-head span{font-size:12px;color:var(--muted)}
+.item{display:flex;align-items:flex-start;gap:12px;background:white;border:1px solid var(--line);border-radius:14px;padding:14px 12px;margin-bottom:8px;min-height:54px;transition:background .15s}
+.item input{appearance:none;width:23px;height:23px;flex-shrink:0;border:2px solid #b5c5bb;border-radius:7px;margin:0;display:grid;place-items:center}
+.item input:checked{background:var(--green2);border-color:var(--green2)}.item input:checked:after{content:"✓";color:white;font-weight:900;font-size:16px}
+.item .label{font-size:14px;line-height:1.45;flex:1}.item.done{background:#edf5ef}.item.done .label{text-decoration:line-through;color:#6c7e73}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+footer{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:9px;justify-content:center}
+footer button{max-width:320px;flex:1}
+.note{font-size:12px;line-height:1.5;color:var(--muted);padding:12px 2px}
+@media(min-width:600px){header{padding:30px max(22px,calc((100% - 640px)/2))}h1{font-size:34px}main{padding-top:22px}}
+</style>
+</head>
+<body>
+<header><div class="top">🏔️ Trek companion</div><h1>Timbung Pokhari<br>packing checklist</h1><p>One trek. One checklist. Get ready together.</p></header>
+<main>
+<section class="progress-card">
+<div class="progressline"><div><strong id="progressTitle">Your group’s progress</strong><div class="small" id="counts">0 items packed</div></div><div class="percent" id="percent">0%</div></div>
+<div class="track"><div class="fill" id="fill"></div></div>
+<div class="small" id="syncNote">Saved on this device</div>
+<div class="actions"><button class="primary" id="shareBtn">↗ Share checklist</button><button class="secondary" id="exportBtn">Export progress</button></div>
+</section>
+<div class="person"><input id="personName" placeholder="Your name (optional)" maxlength="50" aria-label="Your name"><button class="plain" id="saveName">Save name</button></div>
+<div class="toolbar" id="filters"></div>
+<div id="checklist"></div>
+<div class="note">Tip: Mark an item when it is ready. For a truly shared live checklist, publish this app online and connect it to a shared database; this standalone preview saves progress on the current device only.</div>
+</main>
+<footer><button class="primary" id="copySummary">Copy packing summary</button><button class="plain" id="resetBtn">Reset</button></footer>
+<script>
+const groups = {"Clothing & Warm Gear": ["टोपी (जाडोका लागि) र घामबाट बच्ने क्याप", "नेक ब्याण्ड / मफलर", "तातो ज्याकेट", "थर्मल सेट", "स्पोर्ट्स स्यान्डो (कटन/सूतीको निषेध)", "पन्जा (बाक्लो र पातलो दुवै)", "फुल बाहुला मोजा – ३/४ सेट"], "Trekking Equipment": ["ट्रेकिङ ट्राउजर", "ट्रेकिङ जुत्ता", "लठ्ठी / Trekking pole", "०.७–१ लिटरको थर्मस", "टर्च र अतिरिक्त ब्याट्री", "कम्तीमा २०,००० mAh को Power Bank"], "Food & Energy": ["स्न्याक्स, चकलेट वा Energy Bar", "सातु वा मकै / भटमास", "काजु, किसमिसजस्ता Dry Foods", "कार्बोहाइड्रेट र ग्लुकोजयुक्त हल्का बिस्कुट", "डाबर हनी – २५० ml", "पर्याप्त पिउने पानी"], "Medicines & First Aid": ["जीवनजल (ORS) – ८–१० प्याकेट", "सिटामोल", "पखाला तथा पेटसम्बन्धी आवश्यक औषधि", "रुघाखोकीसम्बन्धी आवश्यक औषधि", "Moov", "Handiplast / ब्यान्डेज", "Candid Clotrimazole Powder (आवश्यक भएमा)", "सन्चो / झोल वा अन्य आवश्यक सामग्री", "Eno (आवश्यक भएमा)"], "Personal Care": ["Sunscreen cream", "Vaseline", "Lip guard / Lip balm", "व्यक्तिगत सरसफाइका सामग्री", "व्यक्तिगत नियमित औषधि"], "Final Checks": ["परिचयपत्र र आवश्यक कागजात", "मोबाइल र चार्जर", "ट्रेकिङ ब्याग र रेनकभर", "वर्षाबाट बच्ने ज्याकेट / रेनकोट", "आवश्यक नगद", "मौसम पूर्वानुमान र ट्रेकिङ रुट जाँच", "यात्राअघि सबै सामानको अन्तिम जाँच"]};
+const storageKey='timbung-pokhari-checklist-v1';
+const nameKey='timbung-pokhari-name-v1';
+let state={};let active='All items';
+try{state=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){state={}}
+const checklist=document.getElementById('checklist');
+const filters=document.getElementById('filters');
+const allItems=Object.entries(groups).flatMap(([category,items])=>items.map(item=>({category,item})));
+function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));document.getElementById('syncNote').textContent='Saved on this device ✓'}catch(e){document.getElementById('syncNote').textContent='Could not save on this device'}updateProgress()}
+function updateProgress(){let done=allItems.filter(x=>state[x.item]).length;let p=Math.round(done/allItems.length*100);document.getElementById('percent').textContent=p+'%';document.getElementById('counts').textContent=`${done} of ${allItems.length} items packed`;document.getElementById('fill').style.width=p+'%';document.getElementById('progressTitle').textContent=p===100?'Ready for the trek!':'Your packing progress'}
+function renderFilters(){filters.innerHTML='';['All items',...Object.keys(groups)].forEach(g=>{let b=document.createElement('button');b.className='filter'+(active===g?' active':'');b.textContent=g==='All items'?'All':g;b.onclick=()=>{active=g;renderFilters();render()};filters.appendChild(b)})}
+function render(){checklist.innerHTML='';let chosen=active==='All items'?Object.entries(groups):Object.entries(groups).filter(([g])=>g===active);chosen.forEach(([category,items])=>{let sec=document.createElement('section');sec.className='section';let head=document.createElement('div');head.className='section-head';let h=document.createElement('h2');h.textContent=category;let span=document.createElement('span');span.textContent=items.filter(i=>state[i]).length+'/'+items.length+' packed';head.append(h,span);sec.append(head);items.forEach(item=>{let label=document.createElement('label');label.className='item'+(state[item]?' done':'');let cb=document.createElement('input');cb.type='checkbox';cb.checked=!!state[item];cb.addEventListener('change',()=>{state[item]=cb.checked;label.classList.toggle('done',cb.checked);span.textContent=items.filter(i=>state[i]).length+'/'+items.length+' packed';save()});let text=document.createElement('span');text.className='label';text.textContent=item;label.append(cb,text);sec.append(label)});checklist.append(sec)});updateProgress()}
+document.getElementById('saveName').onclick=()=>{let n=document.getElementById('personName').value.trim();try{localStorage.setItem(nameKey,n)}catch(e){}document.getElementById('saveName').textContent='Saved ✓';setTimeout(()=>document.getElementById('saveName').textContent='Save name',1200)};
+try{document.getElementById('personName').value=localStorage.getItem(nameKey)||''}catch(e){}
+document.getElementById('shareBtn').onclick=async()=>{let text='Timbung Pokhari Trek Checklist\\n'+allItems.map(x=>(state[x.item]?'[✓] ':'[ ] ')+x.item).join('\\n');if(navigator.share){try{await navigator.share({title:'Timbung Pokhari Trek Checklist',text})}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(text);alert('Checklist copied. Paste it into your trekking group chat.')}catch(e){alert(text)}}else{alert('Use Export progress to download a copy, or copy the checklist text from the summary.')}}
+document.getElementById('copySummary').onclick=async()=>{let n=document.getElementById('personName').value.trim();let text='Timbung Pokhari Trek Checklist'+(n?' — '+n:'')+'\\n\\n'+Object.entries(groups).map(([g,items])=>g+'\\n'+items.map(i=>(state[i]?'[✓] ':'[ ] ')+i).join('\\n')).join('\\n\\n');try{await navigator.clipboard.writeText(text);alert('Packing summary copied. Share it in your group chat.')}catch(e){let blob=new Blob([text],{type:'text/plain'});downloadBlob(blob,'timbung-pokhari-checklist.txt')}};
+function downloadBlob(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+document.getElementById('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify({group:'Timbung Pokhari Trek',name:document.getElementById('personName').value,checked:state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,'timbung-pokhari-progress.json')};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Clear all packed marks on this device?')){state={};save();render()}};
+renderFilters();render();
+</script>
+<script>if ("serviceWorker" in navigator && location.protocol.startsWith("http")) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{})); }</script>
+</body></html>
